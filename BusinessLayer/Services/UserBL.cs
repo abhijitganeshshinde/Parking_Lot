@@ -17,11 +17,11 @@ namespace BusinessLayer.Services
             userRL = _userRL;
         }
 
-        public UserRegistration AddUserData(UserRegistration registration)
+        public object UserRegistration(UserRegistration registration)
         {
             try
             {
-                var data = userRL.AddUserData(registration);
+                var data = userRL.UserRegistration(registration);
                 if (data == null)
                 {
                     throw new Exception();
@@ -37,11 +37,11 @@ namespace BusinessLayer.Services
             }
         }
 
-        public List<UserRegistration> GetAllUserData()
+        public List<UserRegistration> GetAllUserDetails()
         {
             try
             {
-                var data = userRL.GetAllUserData();
+                var data = userRL.GetAllUserDetails();
                 if (data == null)
                 {
                     throw new Exception();
@@ -58,18 +58,22 @@ namespace BusinessLayer.Services
             }
         }
 
-        public object Login(Login user)
+
+
+        public object UserLogin(Login login)
         {
             try
             {
-                var data = userRL.Login(user);
-                if (data == null)
+
+                var data = userRL.UserLogin(login);
+                if (login != null)
                 {
-                    throw new Exception();
+                    return data;
                 }
                 else
                 {
-                    return data;
+                    throw new Exception();
+
                 }
             }
             catch (Exception e)
@@ -78,15 +82,6 @@ namespace BusinessLayer.Services
             }
         }
 
-        public object Count()
-        {
-            var data = userRL.Count();
 
-            //if(data.Equals(1))
-            //{
-            //    return "Parking Full";
-            //}
-            return data;
-        }
     }
 }

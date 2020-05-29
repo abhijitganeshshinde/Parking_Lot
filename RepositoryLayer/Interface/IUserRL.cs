@@ -8,11 +8,13 @@ namespace RepositoryLayer.Interface
 {
     public interface IUserRL
     {
-        UserRegistration AddUserData(UserRegistration registration);
-        List<UserRegistration> GetAllUserData();
+        // User Registration
+        object UserRegistration(UserRegistration details);
 
-        object Login(Login user);
+        // Get All User Data
+        List<UserRegistration> GetAllUserDetails();
 
-        object Count();
+        // User Login
+        object UserLogin(Login login);
     }
 }

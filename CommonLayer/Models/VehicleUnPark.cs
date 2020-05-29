@@ -13,7 +13,9 @@ namespace CommonLayer.Models
 
         [ForeignKey("ParkingLotDetails")]
         public int Receipt_Number { get; set; }
-        public System.DateTime UnPark { get; set; }
+
+        public string Status { get; set; }
+        public System.DateTime UnParkDate { get; set; }
 
         public double TotalTime { get; set; }
 

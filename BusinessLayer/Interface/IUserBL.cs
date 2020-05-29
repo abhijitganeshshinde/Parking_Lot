@@ -8,10 +8,9 @@ namespace BusinessLayer.Interface
 {
     public interface IUserBL
     {
-        UserRegistration AddUserData(UserRegistration registration);
-        List<UserRegistration> GetAllUserData();
-        object Login(Login user);
+        object UserRegistration(UserRegistration registration);
+        List<UserRegistration> GetAllUserDetails();
 
-        object Count();
+        object UserLogin(Login login);
     }
 }

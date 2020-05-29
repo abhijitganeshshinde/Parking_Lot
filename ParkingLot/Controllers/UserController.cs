@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using BusinessLayer.Interface;
 using CommonLayer.Models;
@@ -8,6 +11,9 @@ using CommonLayer.Responce;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace ParkingLot.Controllers
 {
@@ -16,101 +22,151 @@ namespace ParkingLot.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBL userBL;
+        private readonly IConfiguration _config;
 
-        public UserController(IUserBL _userBL)
+        public UserController(IUserBL _userBL, IConfiguration config)
         {
             userBL = _userBL;
+            _config = config;
         }
 
-
+        /// <summary>
+        /// Get All User Detals
+        /// This Method Only Access By Admin
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("")]
         [Authorize(Roles = "Admin")]
-        public ActionResult GetAllUserData()
+        public ActionResult GetAllUserDetails()
         {
-            var data = userBL.GetAllUserData();
-            bool success = true;
-            string message;
-            message = "Successfully Get All User Data";
-            return Ok(new { success, message, data });
-        }
-
-        [HttpPost]
-        [Route("")]
-        public ActionResult AddUserDetail(UserRegistration registration)
-        {
-            var data = userBL.AddUserData(registration);
-            bool success = true;
-            string message;
-            message = "Registration Successfully";
-            return Ok(new { success, message, data });
-        }
-
-        [HttpPost]
-        [Route("Login")]
-        public ActionResult Login(Login registration)
-        {
-            var data = userBL.Login(registration);
-            bool success = false;
-            string message;
-
-            if (registration.User_Type.Contains("Admin"))
+            try
             {
-                success = true;
-                message = "Login Successfully With Admin Privilege ";
-                return Ok(new { success, message, data });
-            }
-            else if (registration.User_Type.Contains("Police"))
-            {
-                success = true;
-                message = "Login Successfully With Police Privilege ";
-                return Ok(new { success, message, data });
-            }
-            else if (registration.User_Type.Contains("Security"))
-            {
-                success = true;
-                message = "Login Successfully With Security Privilege ";
-
-                if (data.Equals(2))
+                var data = userBL.GetAllUserDetails();
+                bool success = false;
+                string message;
+                if (data == null)
                 {
-                    // message = "Parking Full";
-                    string status = "Parking Full";
-                    return Ok(new { success, message, status });
+                    success = true;
+                    message = "Successfully Get All User Data";
+                    return Ok(new { success, message, data });
                 }
                 else
                 {
-                    string status = "Parking Available";
-                    return Ok(new { success, message, status });
+                    message = "Fail To Get All User Data";
+                    return Ok(new { success, message });
                 }
-
             }
-            else
+            catch (Exception e)
             {
-                success = true;
-                message = "Login Successfully With Driver Privilege ";
-                return Ok(new { success, message, data });
+                // Exception
+                return BadRequest(e.Message);
             }
         }
 
-        [HttpGet]
-        [Route("count")]
-        public ActionResult Count()
+        /// <summary>
+        /// This Method For User Registration
+        /// </summary>
+        /// <param name="registration"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Registration")]
+        public ActionResult UserRegistration(UserRegistration registration)
         {
-            var data = userBL.Count();
-            bool success = false;
-            string message;
-
-            if (data.Equals(2))
+            try
             {
-                success = true;
-                message = "Parking Full";
-                return Ok(new { success, message });
+                var data = userBL.UserRegistration(registration);
+                bool success = false;
+                string message;
+                if (data != null)
+                {
+                    success = true;
+                    message = "Registration Successfully";
+                    return Ok(new { success, message, data });
+                }
+                else
+                {
+                    //  success = true;
+                    message = "Registration Fail";
+                    return Ok(new { success, message });
+                }
             }
-            else
+            catch (Exception)
             {
-                success = true;
-                message = "Parking Avaliable";
-                return Ok(new { success, message });
+                string message = "UserName Or Email Is Already Available In Database";
+                //ResponceMessage myReturnData = new ResponceMessage() { ErrorMessage = "UserName Or Email Is Alrady Available In Database" };
+                //string json = JsonConvert.SerializeObject(myReturnData);
+                return BadRequest(message);
+            }
+        }
+
+
+        /// <summary>
+        /// This Method For User Login
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Login")]
+        public ActionResult UserLogin(Login login)
+        {
+            try
+            {
+                var data = userBL.UserLogin(login);
+                bool success = false;
+                string message, JsonToken;
+
+                if (data != null)
+                {
+                    success = true;
+                    message = "Login Successfully With " + login.User_Type + " Privilege ";
+                    JsonToken = CreateToken(login);
+                    return Ok(new { success, message, data, JsonToken });
+                }
+                else
+                {
+                    message = "Login Fail";
+                    return Ok(new { success, message });
+                }
+            }
+            catch
+            {
+                ResponceMessage myReturnData = new ResponceMessage() { ErrorMessage = "User Data Not Found" };
+                string json = JsonConvert.SerializeObject(myReturnData);
+                return Ok(json);
+            }
+        }
+
+        /// <summary>
+        /// This Method Help Us To Generate Token With Role Base
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private string CreateToken(Login user)
+        {
+            try
+            {
+                var symmetricSecuritykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+
+                var signingCreds = new SigningCredentials(symmetricSecuritykey, SecurityAlgorithms.HmacSha256);
+
+                var claims = new List<Claim>();
+                claims.Add(new Claim(ClaimTypes.Role, user.User_Type));
+                claims.Add(new Claim("UserName", user.UserName.ToString()));
+                claims.Add(new Claim("Password", user.Password.ToString()));
+
+                var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+                    _config["Jwt:Issuer"],
+                    claims,
+                    expires: DateTime.Now.AddHours(1),
+                    signingCredentials: signingCreds);
+                // Return Token
+                return new JwtSecurityTokenHandler().WriteToken(token);
+            }
+            catch (Exception e)
+            {
+                // Exception
+                throw new Exception(e.Message);
             }
         }
     }
