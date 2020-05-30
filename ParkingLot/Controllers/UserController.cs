@@ -21,10 +21,10 @@ namespace ParkingLot.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserBL userBL;
+        private readonly IUserBusiness userBL;
         private readonly IConfiguration _config;
 
-        public UserController(IUserBL _userBL, IConfiguration config)
+        public UserController(IUserBusiness _userBL, IConfiguration config)
         {
             userBL = _userBL;
             _config = config;
@@ -45,7 +45,7 @@ namespace ParkingLot.Controllers
                 var data = userBL.GetAllUserDetails();
                 bool success = false;
                 string message;
-                if (data == null)
+                if (data != null)
                 {
                     success = true;
                     message = "Successfully Get All User Data";
@@ -57,10 +57,11 @@ namespace ParkingLot.Controllers
                     return Ok(new { success, message });
                 }
             }
-            catch (Exception e)
+            catch
             {
-                // Exception
-                return BadRequest(e.Message);
+                bool success = false;
+                string message = "Fail Get All User Data";
+                return BadRequest(new { success, message });
             }
         }
 
@@ -94,9 +95,8 @@ namespace ParkingLot.Controllers
             catch (Exception)
             {
                 string message = "UserName Or Email Is Already Available In Database";
-                //ResponceMessage myReturnData = new ResponceMessage() { ErrorMessage = "UserName Or Email Is Alrady Available In Database" };
-                //string json = JsonConvert.SerializeObject(myReturnData);
-                return BadRequest(message);
+                bool success = false;
+                return BadRequest(new { success, message });
             }
         }
 
@@ -131,9 +131,9 @@ namespace ParkingLot.Controllers
             }
             catch
             {
-                ResponceMessage myReturnData = new ResponceMessage() { ErrorMessage = "User Data Not Found" };
-                string json = JsonConvert.SerializeObject(myReturnData);
-                return Ok(json);
+                string message = "User Data Not Found";
+                bool success = false;
+                return BadRequest(new { success, message });
             }
         }
 

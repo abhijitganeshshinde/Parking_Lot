@@ -4,33 +4,30 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RepositoryLayer.Interface
+namespace BusinessLayer.Interface
 {
-    public interface IParkingLotRL
-    {
-        // Get All Parking Cars Details
+    public interface IParkingLotBusiness
+    {        // Get All Parking Details
         List<Parking> GetAllParkingCarsDetails();
-
         // Car Details For Parking The Car
         object CarDetailsForParking(ParkingLotDetails details);
-
-        // Car UnPark 
+        // Car UnPark
         object CarUnPark(VehicleUnPark details);
 
-        // Get Car Details By Car Brand
+        // Get Car Details By Vehicle Brand
         object GetCarDetailsByVehicleBrand(string brand);
 
-        // Get Car Details By Car Number
-        object GetCarDetailsByVehicleNumber(string number);
+        // Get Car Details By Vehicle Number
+        object GetCarDetailsByVehicleNumber(string VehicalNumber);
 
-        // Parking Lot Status (Full Or Not)
+        // Parking Lot Status (Full OR Not)
         object ParkingLotStatus();
-
         // Get Car Details By Parking Slot
         object GetCarDetailsByParkingSlot(string Slot);
 
-        // Get All UnPark Car Details
+        // Get UnPark Car Details
         object GetUnParkCarDetail();
-
+        // Delete Car Details
+        object DeleteCarParkingDetails(int ReceiptNumber);
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BusinessLayer.Interface;
 using CommonLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,57 +14,77 @@ namespace ParkingLot.Controllers
     [ApiController]
     public class ParkingLotsController : ControllerBase
     {
-        public readonly IParkingLotBL parkingLotBL;
+        public readonly IParkingLotBusiness parkingLotBusiness;
 
-        public ParkingLotsController(IParkingLotBL _parkingLotBL)
+        public ParkingLotsController(IParkingLotBusiness _parkingLotBusiness)
         {
-            parkingLotBL = _parkingLotBL;
+            parkingLotBusiness = _parkingLotBusiness;
         }
 
-
+        /// <summary>
+        ///  This Method For Car Parking 
+        ///  And The HTTP Request Is Post 
+        ///  And This Method Only By Admin(Owner)
+        ///  Route Address Is api/ParkingLots/Park 
+        /// </summary>
+        /// <param name="details"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("Park")]
-        public ActionResult AddParkingDetail(ParkingLotDetails parkingLot)
+        public ActionResult CarDetailsForParking(ParkingLotDetails details)
         {
             try
             {
-                var data = parkingLotBL.CarDetailsForParking(parkingLot);
-                var count = parkingLotBL.ParkingLotStatus();
+
+                var data = parkingLotBusiness.CarDetailsForParking(details);
+                var count = parkingLotBusiness.ParkingLotStatus();
                 bool success = false;
                 string message;
-                if (!count.Equals(10))
+                if (data == null)
                 {
-                    success = true;
-                    message = "Success";
-                    return Ok(new { success, message, data });
+                    success = false;
+                    message = "Parking Full";
+                    return Ok(new { success, message });
                 }
                 else
                 {
                     success = true;
-                    message = "Park Fail Because Parking Full";
-                    return Ok(new { success, message });
+                    message = "Success";
+                    return Ok(new { success, message, data });
+
                 }
             }
-            catch (Exception e)
+            catch
             {
-                return BadRequest(e.Message);
+                bool success = false;
+                string message = "Fail";
+                return BadRequest(new { success, message });
             }
 
         }
 
 
+        /// <summary>
+        /// This Method For Get All Parking Cars Details
+        /// This Method Is Access By Admin And Police Only
+        /// This Method Use HTTPGET
+        /// This Method Route Is api/ParkingLots
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin,Police")]
         [HttpGet]
         [Route("")]
-        public ActionResult GetAllParkingDetail()
+        public ActionResult GetAllParkingCarsDetails()
         {
             try
             {
-                var data = parkingLotBL.GetAllParkingLotDetails();
+                var data = parkingLotBusiness.GetAllParkingCarsDetails();
                 bool success;
                 string message;
                 if (data == null)
                 {
-                    success = true;
+                    success = false;
                     message = "Fail Get All Parking Data";
                     return Ok(new { success, message });
                 }
@@ -76,17 +97,28 @@ namespace ParkingLot.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                bool success = false;
+                string message = "Fail";
+                return BadRequest(new { success, message });
             }
         }
 
+        /// <summary>
+        /// This Method For Park Car Need To UnPark That Car Using Receipt Number
+        /// This Method Only Use By  Admin Only
+        /// This Method Use HTTPPOST
+        /// This Mehod Use Route api/ParkingLots/UnPark
+        /// </summary>
+        /// <param name="details"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("UnPark")]
-        public ActionResult UnPark(VehicleUnPark vehicleUnPark)
+        public ActionResult CarUnPark(VehicleUnPark details)
         {
             try
             {
-                var data = parkingLotBL.CarUnPark(vehicleUnPark);
+                var data = parkingLotBusiness.CarUnPark(details);
                 bool success;
                 string message;
                 if (data != null)
@@ -97,30 +129,40 @@ namespace ParkingLot.Controllers
                 }
                 else
                 {
-                    success = true;
+                    success = false;
                     message = "Fail To UnPark";
                     return Ok(new { success, message });
                 }
             }
-            catch (Exception e)
+            catch
             {
-                return BadRequest(e.Message);
+                bool sucess = false;
+                string message = "Fail To UnPakr";
+                return BadRequest(new { sucess, message });
             }
         }
 
 
+        /// <summary>
+        /// This Method Get UnPakr Car Details
+        /// This Method Use By Admin And Driver
+        /// This Method Use HTTPGET
+        /// This Method Route Is api/ParkingLots/UnPark
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin,Driver")]
         [HttpGet]
         [Route("UnPark")]
-        public ActionResult UnParkCarDetail()
+        public ActionResult GetUnParkCarDetail()
         {
             try
             {
-                var data = parkingLotBL.GetUnParkCarDetail();
+                var data = parkingLotBusiness.GetUnParkCarDetail();
                 bool success;
                 string message;
                 if (data == null)
                 {
-                    success = true;
+                    success = false;
                     message = "Fail";
                     return Ok(new { success, message });
                 }
@@ -131,26 +173,35 @@ namespace ParkingLot.Controllers
                     return Ok(new { success, message, data });
                 }
             }
-            catch (Exception e)
+            catch
             {
 
-                return BadRequest(e.Message);
+                bool success = false;
+                string message = "Fail";
+                return BadRequest(new { success, message });
             }
         }
 
-
+        /// <summary>
+        /// This Method Get Car Details By Parking Slot
+        /// This Method Use By Admin And Police
+        /// This Method Use HTTPGET
+        /// This Method Route Is api/ParkingLots/SearchBuSlot
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin,Police")]
         [HttpGet]
-        [Route("Search/{slot}")]
-        public ActionResult ParkingSlot(string slot)
+        [Route("SearchBySlot/{slot}")]
+        public ActionResult GetCarDetailsByParkingSlot(string slot)
         {
             try
             {
-                var data = parkingLotBL.GetCarDetailsByParkingSlot(slot);
+                var data = parkingLotBusiness.GetCarDetailsByParkingSlot(slot);
                 bool success;
                 string message;
                 if (data == null)
                 {
-                    success = true;
+                    success = false;
                     message = "Fail";
                     return Ok(new { success, message });
                 }
@@ -161,27 +212,36 @@ namespace ParkingLot.Controllers
                     return Ok(new { success, message, data });
                 }
             }
-            catch (InvalidOperationException e)
+            catch
             {
-                return BadRequest(e.Message);
+                bool success = false;
+                string message = "Fail To Search";
+                return BadRequest(new { success, message });
             }
         }
 
-
+        /// <summary>
+        /// This Method Get Parking Lot Stautus 
+        /// This Method Use By Admin And Seurity
+        /// This Method Use HTTPGET
+        /// This Method Route Is api/ParkingLots/ParkingStatus
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("ParkingStatus")]
-        public ActionResult ParkingStatus()
+        [Authorize(Roles = "Admin,Security")]
+        public ActionResult ParkingLotStatus()
         {
             try
             {
-                var data = parkingLotBL.ParkingLotStatus();
+                var data = parkingLotBusiness.ParkingLotStatus();
                 bool success;
                 string message;
-                if (data != null)
+                if (data.Equals(10))
                 {
-                    success = true;
+                    success = false;
                     message = "Parking Full";
-                    return Ok(new { success, message, data });
+                    return Ok(new { success, message });
                 }
                 else
                 {
@@ -192,68 +252,126 @@ namespace ParkingLot.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                bool success = false;
+                string message = "Fail";
+                return BadRequest(new { success, message });
             }
         }
 
-
-        //    [Authorize(Roles = "Admin,Police")]
+        /// <summary>
+        /// This Method Get Car Details By Car Brand
+        /// This Method Use By Admin And Police
+        /// This Method Use HTTPPOST
+        /// This Method Route Is api/ParkingLots/Search
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin,Police")]
         [HttpPost]
         [Route("Search/{brand}")]
-        public ActionResult GetCarDetailByBrand(string brand)
+        public ActionResult GetCarDetailsByVehicleBrand(string brand)
         {
             try
             {
-                var data = parkingLotBL.GetCarDetailsByVehicleBrand(brand);
+                var data = parkingLotBusiness.GetCarDetailsByVehicleBrand(brand);
                 bool success = false;
                 string message;
                 if (data != null)
                 {
                     success = true;
-                    message = "Successfully Data Get";
+                    message = "Search";
                     return Ok(new { success, message, data });
                 }
                 else
                 {
-                    message = "Fail";
+                    success = false;
+                    message = "Search Fail";
                     return Ok(new { success, message });
                 }
             }
-            catch (Exception e)
+            catch
             {
-                return BadRequest(e.Message);
+                bool success = false;
+                string message = "Fail To Search";
+                return BadRequest(new { success, message });
             }
         }
 
-
-        //    [Authorize(Roles = "Admin,Police")]
+        /// <summary>
+        /// This Method Get Car Details By Vehicle Number
+        /// This Method Use By Admin And Police
+        /// This Method Use HTTPGET
+        /// This Method Route Is api/ParkingLots/Search
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin,Police")]
         [HttpGet]
-        [Route("Search/{number}")]
-        public ActionResult GetCarDetailByNo(string number)
+        [Route("Search/{vehicleNumber}")]
+        public ActionResult GetCarDetailsByVehicleNumber(string vehicleNumber)
         {
             try
             {
-                var data = parkingLotBL.GetCarDetailsByVehicalNumber(number);
+                var data = parkingLotBusiness.GetCarDetailsByVehicleNumber(vehicleNumber);
                 bool success = false;
                 string message;
                 if (data == null)
                 {
-                    success = true;
+                    success = false;
                     message = "Fail To Search";
                     return Ok(new { success, message });
                 }
                 else
                 {
                     success = true;
-                    message = "Successfully Data Get ";
+                    message = "Search ";
                     return Ok(new { success, message, data });
 
 
                 }
             }
+            catch
+            {
+                bool success = false;
+                string message = "Fail To Search";
+                return BadRequest(new { success, message });
+            }
+        }
+
+        /// <summary>
+        /// This Method Delete Car Details By ReceiptNumber
+        /// This Method Use By Admin
+        /// This Method Use HTTPDELETE
+        /// This Method Route Is api/ParkingLots
+        /// </summary>
+        /// <param name="ReceiptNumber"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        [Route("{ReceiptNumber}")]
+        public ActionResult DeleteCarParkingDetails(int ReceiptNumber)
+        {
+            try
+            {
+                var data = parkingLotBusiness.DeleteCarParkingDetails(ReceiptNumber);
+                bool success = false;
+                string message;
+                if (data == null)
+                {
+                    success = false;
+                    message = "Fail To Delete";
+                    return Ok(new { success, message });
+                }
+                else
+                {
+                    success = true;
+                    message = "Delete";
+                    return Ok(new { success, message, data });
+                }
+            }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                bool success = false;
+                string message = "Fail To Delete";
+                return BadRequest(new { success, message });
             }
         }
     }

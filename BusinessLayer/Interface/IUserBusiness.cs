@@ -6,11 +6,13 @@ using System.Text;
 
 namespace BusinessLayer.Interface
 {
-    public interface IUserBL
+    public interface IUserBusiness
     {
+        // User Registration
         object UserRegistration(UserRegistration registration);
+        //Get All User Details
         List<UserRegistration> GetAllUserDetails();
-
+        // User Login
         object UserLogin(Login login);
     }
 }

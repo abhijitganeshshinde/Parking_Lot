@@ -8,15 +8,21 @@ using System.Text;
 
 namespace BusinessLayer.Services
 {
-    public class UserBL : IUserBL
+    public class UserBusiness : IUserBusiness
     {
-        public readonly IUserRL userRL;
 
-        public UserBL(IUserRL _userRL)
+        public readonly IUserRepository userRL;
+
+        public UserBusiness(IUserRepository _userRL)
         {
             userRL = _userRL;
         }
 
+        /// <summary>
+        /// User Registration
+        /// </summary>
+        /// <param name="registration"></param>
+        /// <returns></returns>
         public object UserRegistration(UserRegistration registration)
         {
             try
@@ -37,6 +43,10 @@ namespace BusinessLayer.Services
             }
         }
 
+        /// <summary>
+        /// Get All User Details
+        /// </summary>
+        /// <returns></returns>
         public List<UserRegistration> GetAllUserDetails()
         {
             try
@@ -59,7 +69,11 @@ namespace BusinessLayer.Services
         }
 
 
-
+        /// <summary>
+        /// User Login
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns></returns>
         public object UserLogin(Login login)
         {
             try
@@ -81,7 +95,5 @@ namespace BusinessLayer.Services
                 throw new Exception(e.Message);
             }
         }
-
-
     }
 }

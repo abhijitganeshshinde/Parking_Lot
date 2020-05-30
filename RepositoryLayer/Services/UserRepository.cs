@@ -13,13 +13,13 @@ namespace RepositoryLayer.Services
   /// This is UserRL Class In This Class
   ///  User Relate Method (Add User Detail , Get User Details ..etc)
   /// </summary>
-    public class UserRL : IUserRL
+    public class UserRepository : IUserRepository
     {
 
-        ParkingLotDBContext db;
-        public UserRL(ParkingLotDBContext _db)
+        ParkingLotDBContext dataBase;
+        public UserRepository(ParkingLotDBContext _dataBase)
         {
-            db = _db;
+            dataBase = _dataBase;
         }
 
         /// <summary>
@@ -33,11 +33,11 @@ namespace RepositoryLayer.Services
             try
             {
                 // Adding Registration Data
-                db.Add(details);
-                db.SaveChanges();
+                dataBase.Add(details);
+                dataBase.SaveChanges();
 
                 // Quary
-                var data = (from userDetails in db.UserDetail
+                var data = (from userDetails in dataBase.UserDetail
                             where userDetails.UserId == details.UserId
                             select new
                             {
@@ -52,10 +52,7 @@ namespace RepositoryLayer.Services
             }
             catch (Exception e)
             {
-                //// Exception
-                //ResponceMessage myReturnData = new ResponceMessage() { ErrorMessage = "User Data Not Found" };
-                //string json = JsonConvert.SerializeObject(myReturnData);
-                //return json;
+                // Exception
                 throw new Exception(e.Message);
             }
         }
@@ -69,7 +66,7 @@ namespace RepositoryLayer.Services
             try
             {
                 // Return User Data
-                return (from userDetails in db.UserDetail
+                return (from userDetails in dataBase.UserDetail
                         select new UserRegistration
                         {
                             UserId = userDetails.UserId,
@@ -78,6 +75,7 @@ namespace RepositoryLayer.Services
                             UserName = userDetails.UserName,
                             Password = userDetails.Password,
                         }).ToList();
+
             }
             catch (Exception e)
             {
@@ -96,7 +94,7 @@ namespace RepositoryLayer.Services
             try
             {
                 // Return Data First Check UserName , Password And UserType Match Or Not
-                return (from userDetails in db.UserDetail
+                return (from userDetails in dataBase.UserDetail
                         where login.UserName == userDetails.UserName && login.Password == userDetails.Password && login.User_Type == userDetails.User_Type
                         select new
                         {

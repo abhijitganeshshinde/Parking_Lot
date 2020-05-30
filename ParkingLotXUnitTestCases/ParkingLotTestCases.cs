@@ -14,17 +14,17 @@ namespace ParkingLotXUnitTestCases
     {
         ParkingLotsController ParkingLotsController;
         UserController UserController;
-        private readonly Mock<IParkingLotBL> parkingLotBL;
-        private readonly Mock<IUserBL> userBL;
+        private readonly Mock<IParkingLotBusiness> parkingLotBusiness;
+        private readonly Mock<IUserBusiness> userBusiness;
         private readonly Mock<IConfiguration> _configuration;
 
         public ParkingLotTestCases()
         {
-            parkingLotBL = new Mock<IParkingLotBL>();
-            userBL = new Mock<IUserBL>();
+            parkingLotBusiness = new Mock<IParkingLotBusiness>();
+            userBusiness = new Mock<IUserBusiness>();
             _configuration = new Mock<IConfiguration>();
-            ParkingLotsController = new ParkingLotsController(parkingLotBL.Object);
-            UserController = new UserController(userBL.Object, _configuration.Object);
+            ParkingLotsController = new ParkingLotsController(parkingLotBusiness.Object);
+            UserController = new UserController(userBusiness.Object, _configuration.Object);
         }
 
 
@@ -32,29 +32,29 @@ namespace ParkingLotXUnitTestCases
         [Fact]
         public void Get_AllParkingData_ReturnOKResult()
         {
-            var data = ParkingLotsController.GetAllParkingDetail();
-            Assert.IsType<OkObjectResult>(data);
+            var okResult = ParkingLotsController.GetAllParkingCarsDetails();
+            Assert.IsType<OkObjectResult>(okResult);
         }
 
         [Fact]
         public void Get_CarDetailByCarNumber_ReturnOKResult()
         {
-            var data = ParkingLotsController.GetCarDetailByNo("MH-12-AA-9122");
-            Assert.IsType<OkObjectResult>(data);
+            var okResult = ParkingLotsController.GetCarDetailsByVehicleNumber("MH-12-AA-9122");
+            Assert.IsType<OkObjectResult>(okResult);
         }
 
         [Fact]
         public void Get_CarDetailByCarBrand_ReturnOKResult()
         {
-            var data = ParkingLotsController.GetCarDetailByBrand("Jaguar");
-            Assert.IsType<OkObjectResult>(data);
+            var okResult = ParkingLotsController.GetCarDetailsByVehicleBrand("Jaguar");
+            Assert.IsType<OkObjectResult>(okResult);
         }
 
         [Fact]
         public void Get_CarDetailByParkingSlot_ReturnOKResult()
         {
-            var data = ParkingLotsController.ParkingSlot("A");
-            Assert.IsType<OkObjectResult>(data);
+            var okResult = ParkingLotsController.GetCarDetailsByParkingSlot("A");
+            Assert.IsType<OkObjectResult>(okResult);
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace ParkingLotXUnitTestCases
             };
 
             // Act
-            var okResult = ParkingLotsController.AddParkingDetail(details);
+            var okResult = ParkingLotsController.CarDetailsForParking(details);
 
             // Assert
             Assert.IsType<OkObjectResult>(okResult);
@@ -90,7 +90,7 @@ namespace ParkingLotXUnitTestCases
             };
 
             // Act
-            var okResult = ParkingLotsController.UnPark(details);
+            var okResult = ParkingLotsController.CarUnPark(details);
 
             // Assert
             Assert.IsType<OkObjectResult>(okResult);
@@ -101,11 +101,23 @@ namespace ParkingLotXUnitTestCases
         {
 
             // Act
-            var okResult = ParkingLotsController.UnParkCarDetail();
+            var okResult = ParkingLotsController.GetUnParkCarDetail();
 
             // Assert
             Assert.IsType<OkObjectResult>(okResult);
         }
+
+        [Fact]
+        public void DeleteParkingDetails_ReturnOKResult()
+        {
+
+            // Act
+            var okResult = ParkingLotsController.DeleteCarParkingDetails(12);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(okResult);
+        }
+
 
         // For UserController
 
@@ -155,7 +167,5 @@ namespace ParkingLotXUnitTestCases
             // Assert
             Assert.IsType<OkObjectResult>(okResult);
         }
-
     }
-}
 }

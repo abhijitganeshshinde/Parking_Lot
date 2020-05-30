@@ -37,10 +37,10 @@ namespace ParkingLot
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<ParkingLotDBContext>(opts => opts.UseSqlServer(Configuration["ConnectionString:ParkingLotDB"]));
-            services.AddScoped<IParkingLotRL, ParkingLotRL>();
-            services.AddScoped<IParkingLotBL, ParkingLotBL>();
-            services.AddScoped<IUserRL, UserRL>();
-            services.AddScoped<IUserBL, UserBL>();
+            services.AddScoped<IParkingLotRepository, ParkingLotRepository>();
+            services.AddScoped<IParkingLotBusiness, ParkingLotBusiness>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserBusiness, UserBusiness>();
 
             services.AddSwaggerGen(options =>
             {
