@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLayer", "CommonLayer\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryLayer", "RepositoryLayer\RepositoryLayer.csproj", "{B75C13C5-C02E-4936-AE26-5078D82EAB2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkingLotXUnitTestCases", "ParkingLotXUnitTestCases\ParkingLotXUnitTestCases.csproj", "{92943CC2-ED88-466B-8BDA-324677D815C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParkingLotXUnitTestCases", "ParkingLotXUnitTestCases\ParkingLotXUnitTestCases.csproj", "{92943CC2-ED88-466B-8BDA-324677D815C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSMQ", "MSMQ\MSMQ.csproj", "{17F0FDC7-6018-4608-9909-D411A633D4F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{92943CC2-ED88-466B-8BDA-324677D815C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92943CC2-ED88-466B-8BDA-324677D815C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92943CC2-ED88-466B-8BDA-324677D815C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17F0FDC7-6018-4608-9909-D411A633D4F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17F0FDC7-6018-4608-9909-D411A633D4F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17F0FDC7-6018-4608-9909-D411A633D4F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17F0FDC7-6018-4608-9909-D411A633D4F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

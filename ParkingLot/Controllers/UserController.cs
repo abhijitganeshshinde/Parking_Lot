@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using ParkingLot.MSMQ;
 
 namespace ParkingLot.Controllers
 {
@@ -23,6 +24,8 @@ namespace ParkingLot.Controllers
     {
         private readonly IUserBusiness userBL;
         private readonly IConfiguration _config;
+
+        Sender sender = new Sender();
 
         public UserController(IUserBusiness _userBL, IConfiguration config)
         {
@@ -83,11 +86,14 @@ namespace ParkingLot.Controllers
                 {
                     success = true;
                     message = "Registration Successfully";
+                    string MSMQ = " Hello " + Convert.ToString(registration.UserName) + " You \n" + message + "\n Email : " + Convert.ToString(registration.Email) + "\n Password : " + Convert.ToString(registration.Password)
+                     + "\n UserType :" + Convert.ToString(registration.User_Type);
+                    sender.Message(MSMQ);
                     return Ok(new { success, message, data });
                 }
                 else
                 {
-                    //  success = true;
+                      success = false;
                     message = "Registration Fail";
                     return Ok(new { success, message });
                 }
