@@ -1,9 +1,12 @@
 ﻿using BusinessLayer.Interface;
+using CommonLayer.DBContext;
 using CommonLayer.Models;
+using CommonLayer.ParkingLimit;
 using CommonLayer.Responce;
 using RepositoryLayer.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BusinessLayer.Services
@@ -12,9 +15,14 @@ namespace BusinessLayer.Services
     {
         private readonly IParkingLotRepository parkingLotRL;
 
-        public ParkingLotBusiness(IParkingLotRepository _parkingLotRL)
+        private readonly ParkingLotDBContext dataBase;
+
+        ParkingLimit Limit = new ParkingLimit();
+
+        public ParkingLotBusiness(IParkingLotRepository _parkingLotRL, ParkingLotDBContext _dataBase)
         {
             parkingLotRL = _parkingLotRL;
+            dataBase = _dataBase;
         }
 
         /// <summary>
@@ -51,20 +59,27 @@ namespace BusinessLayer.Services
         /// </summary>
         /// <param name="parkingLot"></param>
         /// <returns></returns>
-        public object CarDetailsForParking(ParkingLotDetails parkingLot)
+        public ParkingLotDetails CarDetailsForParking(ParkingLotDetails parkingLot)
         {
             try
             {
                 var data = parkingLotRL.CarDetailsForParking(parkingLot);
-                if (data != null)
+                var condition = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "A").Count();
+                var condition1 = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "B").Count();
+                if (condition != Limit.Parking_Slot_A)
                 {
                     // Return Data
+                    parkingLot.Parking_Slot = "A";
                     return data;
 
                 }
+                else if (condition1 != Limit.Parking_Slot_B)
+                {
+                    parkingLot.Parking_Slot = "B";
+                    return data;
+                }
                 else
                 {
-                    // IF Data Null Throw Exception
                     throw new Exception();
                 }
             }

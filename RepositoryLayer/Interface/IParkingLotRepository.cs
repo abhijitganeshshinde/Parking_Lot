@@ -12,7 +12,7 @@ namespace RepositoryLayer.Interface
         List<Parking> GetAllParkingCarsDetails();
 
         // Car Details For Parking The Car
-        object CarDetailsForParking(ParkingLotDetails details);
+        ParkingLotDetails CarDetailsForParking(ParkingLotDetails details);
 
         // Car UnPark 
         object CarUnPark(VehicleUnPark details);
@@ -34,6 +34,7 @@ namespace RepositoryLayer.Interface
 
         // Delete Car Data
         object DeleteCarParkingDetails(int ReceiptNumber);
+
 
     }
 }

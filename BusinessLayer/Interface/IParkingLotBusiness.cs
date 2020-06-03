@@ -7,10 +7,10 @@ using System.Text;
 namespace BusinessLayer.Interface
 {
     public interface IParkingLotBusiness
-    {        // Get All Parking Details
+    {   // Get All Parking Details
         List<Parking> GetAllParkingCarsDetails();
         // Car Details For Parking The Car
-        object CarDetailsForParking(ParkingLotDetails details);
+        ParkingLotDetails CarDetailsForParking(ParkingLotDetails details);
         // Car UnPark
         object CarUnPark(VehicleUnPark details);
 

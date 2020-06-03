@@ -1,5 +1,6 @@
 ﻿using CommonLayer.DBContext;
 using CommonLayer.Models;
+using CommonLayer.ParkingLimit;
 using CommonLayer.Responce;
 using RepositoryLayer.Interface;
 using System;
@@ -12,6 +13,8 @@ namespace RepositoryLayer.Services
     public class ParkingLotRepository : IParkingLotRepository
     {
         ParkingLotDBContext dataBase;
+
+        ParkingLimit Limit = new ParkingLimit();
         public ParkingLotRepository(ParkingLotDBContext _dataBase)
         {
             dataBase = _dataBase;
@@ -22,7 +25,7 @@ namespace RepositoryLayer.Services
         /// </summary>
         /// <param name="details"></param>
         /// <returns></returns>
-        public object CarDetailsForParking(ParkingLotDetails details)
+        public ParkingLotDetails CarDetailsForParking(ParkingLotDetails details)
         {
             var condition = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Status == "Park").Count();
             if (!condition.Equals(10))
@@ -38,6 +41,7 @@ namespace RepositoryLayer.Services
 
                         details.ParkingDate = DateTime.Now;
                         details.Status = "Park";
+                        details.Parking_Slot = checkSlot(details.Parking_Slot);
                         dataBase.Add(details);
                         dataBase.SaveChanges();
                         // Return Data
@@ -57,7 +61,7 @@ namespace RepositoryLayer.Services
                     {
                         // If Data Avaliable With Park Status Return This Message
                         //  return details.Vehicle_Number + " This Car Data Available With Park Status";
-                        throw new Exception();
+                        throw new Exception("Already Park " + details.Vehicle_Number + " This Car Number");
                     }
                 }
                 catch (Exception e)
@@ -69,7 +73,7 @@ namespace RepositoryLayer.Services
             else
             {
 
-                return "Sorry ParkingLot Is Full";
+                throw new Exception("Sorry ParkingLot Is Full");
             }
         }
 
@@ -132,15 +136,15 @@ namespace RepositoryLayer.Services
                 }
                 else
                 {
-                    throw new Exception();
+                    throw new Exception(details.Receipt_Number + " This Receipt Number Already UnPark");
                 }
 
             }
             catch (Exception e)
             {
-                string message = "Receipt Number Not Found";
+                string messsage = "Receipt Number Not Found";
                 // Exception
-                throw new Exception((message));
+                throw new Exception(messsage);
             }
         }
 
@@ -355,8 +359,6 @@ namespace RepositoryLayer.Services
                     throw new Exception();
                 }
 
-
-
             }
             catch (Exception e)
             {
@@ -365,5 +367,29 @@ namespace RepositoryLayer.Services
             }
         }
 
+        public string checkSlot(string parkingSlot)
+        {
+            var condition = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "A" && parkingDetails.Status == "Park").Count();
+            var condition1 = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "B" && parkingDetails.Status == "Park").Count();
+            var condition2 = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "C" && parkingDetails.Status == "Park").Count();
+            if (condition != Limit.Parking_Slot_A)
+            {
+                // Return Data
+                return parkingSlot = "A";
+
+            }
+            else if (condition1 != Limit.Parking_Slot_B)
+            {
+                return parkingSlot = "B";
+            }
+            else if (condition2 != Limit.Parking_Slot_C)
+            {
+                return parkingSlot = "C";
+            }
+            else
+            {
+                throw new Exception("Parking Is Full");
+            }
+        }
     }
 }

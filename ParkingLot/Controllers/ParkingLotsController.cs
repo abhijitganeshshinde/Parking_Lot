@@ -29,7 +29,7 @@ namespace ParkingLot.Controllers
         /// </summary>
         /// <param name="details"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin")]
+ //       [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("Park")]
         public ActionResult CarDetailsForParking(ParkingLotDetails details)
@@ -50,15 +50,15 @@ namespace ParkingLot.Controllers
                 else
                 {
                     success = true;
-                    message = "Success";
+                    message = "Successfully Car Park";
                     return Ok(new { success, message, data });
 
                 }
             }
-            catch
+            catch (Exception e)
             {
                 bool success = false;
-                string message = "Fail";
+                string message = e.Message;
                 return BadRequest(new { success, message });
             }
 
@@ -72,7 +72,7 @@ namespace ParkingLot.Controllers
         /// This Method Route Is api/ParkingLots
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Police")]
+ //       [Authorize(Roles = "Admin,Police")]
         [HttpGet]
         [Route("")]
         public ActionResult GetAllParkingCarsDetails()
@@ -98,7 +98,7 @@ namespace ParkingLot.Controllers
             catch (Exception e)
             {
                 bool success = false;
-                string message = "Fail";
+                string message = e.Message;
                 return BadRequest(new { success, message });
             }
         }
@@ -111,7 +111,7 @@ namespace ParkingLot.Controllers
         /// </summary>
         /// <param name="details"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin")]
+//        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("UnPark")]
         public ActionResult CarUnPark(VehicleUnPark details)
@@ -134,10 +134,10 @@ namespace ParkingLot.Controllers
                     return Ok(new { success, message });
                 }
             }
-            catch
+            catch (Exception e)
             {
                 bool sucess = false;
-                string message = "Fail To UnPakr";
+                string message = e.Message;
                 return BadRequest(new { sucess, message });
             }
         }
@@ -150,7 +150,7 @@ namespace ParkingLot.Controllers
         /// This Method Route Is api/ParkingLots/UnPark
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Driver")]
+ //       [Authorize(Roles = "Admin,Driver")]
         [HttpGet]
         [Route("UnPark")]
         public ActionResult GetUnParkCarDetail()
@@ -173,11 +173,11 @@ namespace ParkingLot.Controllers
                     return Ok(new { success, message, data });
                 }
             }
-            catch
+            catch (Exception e)
             {
 
                 bool success = false;
-                string message = "Fail";
+                string message = e.Message;
                 return BadRequest(new { success, message });
             }
         }
@@ -189,7 +189,7 @@ namespace ParkingLot.Controllers
         /// This Method Route Is api/ParkingLots/SearchBuSlot
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Police")]
+//        [Authorize(Roles = "Admin,Police")]
         [HttpGet]
         [Route("SearchBySlot/{slot}")]
         public ActionResult GetCarDetailsByParkingSlot(string slot)
@@ -212,10 +212,10 @@ namespace ParkingLot.Controllers
                     return Ok(new { success, message, data });
                 }
             }
-            catch
+            catch (Exception e)
             {
                 bool success = false;
-                string message = "Fail To Search";
+                string message = e.Message;
                 return BadRequest(new { success, message });
             }
         }
@@ -229,7 +229,7 @@ namespace ParkingLot.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("ParkingStatus")]
-        [Authorize(Roles = "Admin,Security")]
+        //       [Authorize(Roles = "Admin,Security")]
         public ActionResult ParkingLotStatus()
         {
             try
@@ -253,7 +253,7 @@ namespace ParkingLot.Controllers
             catch (Exception e)
             {
                 bool success = false;
-                string message = "Fail";
+                string message = e.Message;
                 return BadRequest(new { success, message });
             }
         }
@@ -265,7 +265,7 @@ namespace ParkingLot.Controllers
         /// This Method Route Is api/ParkingLots/Search
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Police")]
+//        [Authorize(Roles = "Admin,Police")]
         [HttpPost]
         [Route("Search/{brand}")]
         public ActionResult GetCarDetailsByVehicleBrand(string brand)
@@ -288,10 +288,10 @@ namespace ParkingLot.Controllers
                     return Ok(new { success, message });
                 }
             }
-            catch
+            catch (Exception e)
             {
                 bool success = false;
-                string message = "Fail To Search";
+                string message = e.Message;
                 return BadRequest(new { success, message });
             }
         }
@@ -303,7 +303,7 @@ namespace ParkingLot.Controllers
         /// This Method Route Is api/ParkingLots/Search
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin,Police")]
+ //       [Authorize(Roles = "Admin,Police")]
         [HttpGet]
         [Route("Search/{vehicleNumber}")]
         public ActionResult GetCarDetailsByVehicleNumber(string vehicleNumber)
@@ -328,10 +328,10 @@ namespace ParkingLot.Controllers
 
                 }
             }
-            catch
+            catch (Exception e)
             {
                 bool success = false;
-                string message = "Fail To Search";
+                string message = e.Message;
                 return BadRequest(new { success, message });
             }
         }
@@ -344,7 +344,7 @@ namespace ParkingLot.Controllers
         /// </summary>
         /// <param name="ReceiptNumber"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin")]
+//        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("{ReceiptNumber}")]
         public ActionResult DeleteCarParkingDetails(int ReceiptNumber)
@@ -370,7 +370,7 @@ namespace ParkingLot.Controllers
             catch (Exception e)
             {
                 bool success = false;
-                string message = "Fail To Delete";
+                string message = e.Message;
                 return BadRequest(new { success, message });
             }
         }
