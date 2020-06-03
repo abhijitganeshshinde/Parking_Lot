@@ -42,6 +42,11 @@ namespace RepositoryLayer.Services
                         details.ParkingDate = DateTime.Now;
                         details.Status = "Park";
                         details.Parking_Slot = checkSlot(details.Parking_Slot);
+                        details.ParkingException = ParkingException(details.ParkingException);
+                        if (details.ParkingException == "Handicap")
+                        {
+                            details.Parking_Slot = checkPakingSlotForHandicap(details.Parking_Slot);
+                        }
                         dataBase.Add(details);
                         dataBase.SaveChanges();
                         // Return Data
@@ -367,18 +372,42 @@ namespace RepositoryLayer.Services
             }
         }
 
+
         public string checkSlot(string parkingSlot)
+        {
+            var condition = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "A" && parkingDetails.Status == "Park").Count();
+            var condition1 = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "B" && parkingDetails.Status == "Park").Count();
+            var condition2 = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "C" && parkingDetails.Status == "Park").Count();
+            if (condition2 != Limit.Parking_Slot_C)
+            {
+                return parkingSlot = "C";
+            }
+            else
+            if (condition1 != Limit.Parking_Slot_B)
+            {
+                return parkingSlot = "B";
+            }
+            else if (condition != Limit.Parking_Slot_A)
+            {
+                return parkingSlot = "A";
+            }
+            else
+            {
+                throw new Exception("Parking Is Full");
+            }
+        }
+
+        public string checkPakingSlotForHandicap(string parkingSlot)
         {
             var condition = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "A" && parkingDetails.Status == "Park").Count();
             var condition1 = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "B" && parkingDetails.Status == "Park").Count();
             var condition2 = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "C" && parkingDetails.Status == "Park").Count();
             if (condition != Limit.Parking_Slot_A)
             {
-                // Return Data
                 return parkingSlot = "A";
-
             }
-            else if (condition1 != Limit.Parking_Slot_B)
+            else
+            if (condition1 != Limit.Parking_Slot_B)
             {
                 return parkingSlot = "B";
             }
@@ -389,6 +418,21 @@ namespace RepositoryLayer.Services
             else
             {
                 throw new Exception("Parking Is Full");
+            }
+        }
+
+
+        public string ParkingException(string exception)
+        {
+            var condition = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "A" && parkingDetails.Status == "Park" && parkingDetails.ParkingException == "Handicap").Count();
+            if (exception == "Handicap")
+            {
+                // Return Data
+                return exception = "Handicap";
+            }
+            else
+            {
+                return exception = "Not";
             }
         }
     }

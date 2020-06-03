@@ -36,6 +36,8 @@ namespace CommonLayer.Models
         [Required(ErrorMessage = "Wrong Field Name Please Write Parking_Slot")]
         public string Parking_Slot { get; set; }
 
+        public string ParkingException { get; set; }
+
         public string Status { get; set; }
 
         public System.DateTime ParkingDate { get; set; }
