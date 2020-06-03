@@ -29,5 +29,7 @@ namespace BusinessLayer.Interface
         object GetUnParkCarDetail();
         // Delete Car Details
         object DeleteCarParkingDetails(int ReceiptNumber);
+
+        object GetAllCarDetailsOfHandicap();
     }
 }

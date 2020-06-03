@@ -373,6 +373,38 @@ namespace RepositoryLayer.Services
         }
 
 
+        /// <summary>
+        /// Get Car Details Of Handicap
+        /// </summary>
+        /// <returns></returns>
+        public object GetAllCarDetailsOfHandicap()
+        {
+            try
+            {
+                // Quary 
+                if (dataBase.ParkingDetail.Any(x => x.ParkingException == "Handicap"))
+                {
+                    // Quary For Get All  Car Detail 
+                    var VehicleData = (from parkingDetails in dataBase.ParkingDetail
+                                       where parkingDetails.ParkingException == "Handicap"
+                                       select parkingDetails).ToList();
+                    // Return Data
+                    return VehicleData;
+                }
+                else
+                {
+                    // If Data Not Found
+                    throw new Exception();
+                }
+            }
+            catch (Exception e)
+            {
+                // Exception
+                throw new Exception(e.Message);
+            }
+        }
+
+
         public string checkSlot(string parkingSlot)
         {
             var condition = dataBase.ParkingDetail.Where(parkingDetails => parkingDetails.Parking_Slot == "A" && parkingDetails.Status == "Park").Count();

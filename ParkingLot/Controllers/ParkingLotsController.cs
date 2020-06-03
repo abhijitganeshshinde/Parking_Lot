@@ -374,5 +374,45 @@ namespace ParkingLot.Controllers
                 return BadRequest(new { success, message });
             }
         }
+
+
+        /// <summary>
+        /// This Method Get Car Details Of Handicap
+        /// This Method Use By Admin
+        /// This Method Use HTTPGET
+        /// This Method Route Is api/ParkingLots
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Handicap")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult GetAllTheCarDetailsOfHandicap()
+        {
+
+            try
+            {
+                var data = parkingLotBusiness.GetAllCarDetailsOfHandicap();
+                bool success = false;
+                string message;
+                if (data == null)
+                {
+                    success = false;
+                    message = "No Details";
+                    return Ok(new { success, message });
+                }
+                else
+                {
+                    success = true;
+                    message = "Successfully Get Details";
+                    return Ok(new { success, message, data });
+                }
+            }
+            catch (Exception e)
+            {
+                bool success = false;
+                string message = e.Message;
+                return BadRequest(new { success, message });
+            }
+        }
     }
 }

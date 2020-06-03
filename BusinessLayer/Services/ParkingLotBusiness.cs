@@ -290,5 +290,34 @@ namespace BusinessLayer.Services
 
             }
         }
+
+        /// <summary>
+        /// Get All  Car Details Of Handiicap
+        /// </summary>
+        /// <returns></returns>
+
+        public object GetAllCarDetailsOfHandicap()
+        {
+            try
+            {
+                var data = parkingLotRL.GetAllCarDetailsOfHandicap();
+                if (data == null)
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    return data;
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                // Exception
+                throw new Exception(e.Message);
+
+            }
+        }
     }
 }

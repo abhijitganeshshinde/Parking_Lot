@@ -35,6 +35,9 @@ namespace RepositoryLayer.Interface
         // Delete Car Data
         object DeleteCarParkingDetails(int ReceiptNumber);
 
+        // Get All Car Details Of Handicap
+        object GetAllCarDetailsOfHandicap();
+
 
     }
 }
