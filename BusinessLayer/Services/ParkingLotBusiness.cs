@@ -19,10 +19,9 @@ namespace BusinessLayer.Services
 
         ParkingLimit Limit = new ParkingLimit();
 
-        public ParkingLotBusiness(IParkingLotRepository _parkingLotRL, ParkingLotDBContext _dataBase)
+        public ParkingLotBusiness(IParkingLotRepository _parkingLotRL)
         {
             parkingLotRL = _parkingLotRL;
-            dataBase = _dataBase;
         }
 
         /// <summary>

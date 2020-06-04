@@ -83,9 +83,13 @@ namespace MSMQ
 
         private void FireRecieveEvent(object body)
         {
+            SMTP Mail = new SMTP();
+
             if (MessageReceived != null)
             {
                 MessageReceived(this, new MessageEventArgs(body));
+                string message = body.ToString();
+                Mail.SendMail("abhijit", "abhijitganeshshinde@gmail.com", message);
             }
         }
 
